@@ -1,0 +1,1 @@
+java -cp bin;../wip/vtwsclib/java/vtwsclib.jar com.vtiger.tests.vtwsclib.TestWSClient 

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/*+**********************************************************************************
+ * The contents of this file are subject to the vtiger CRM Public License Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * The Original Code is:  vtiger CRM Open Source
+ * The Initial Developer of the Original Code is vtiger.
+ * Portions created by vtiger are Copyright (C) vtiger.
+ * All Rights Reserved.
+ ************************************************************************************/
+-->
+<project name="vtwsclib-java" default="dist" basedir=".">
+
+	<property name="app.name" value="vtwsclib"/>
+	
+	<property name="src.home" value="src" />	
+	<property name="build.home" value="bin" />	
+	<!-- Create the distbution jar in the vtwsclib codebase -->
+	<property name="dist.home" value="dist" />
+	<property name="deps.home" value="${dist.home}/deps" />
+	
+	<property name="compile.debug"       value="true"/>
+	<property name="compile.deprecation" value="false"/>
+	<property name="compile.optimize"    value="true"/>
+
+	<!-- Set of library to be included during compilation or execution -->
+	<path id="compile.classpath">
+		<fileset dir="lib/httpcomponents-client" id="httpcomponents-client-jars">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="all" depends="clean,compile,dist"></target>
+		
+	<target name="clean">
+		<delete dir="${build.home}"/>
+		<delete dir="${dist.home}"/>
+		<delete dir="${deps.home}"/>
+	</target>
+		
+	<target name="prepare">
+		<mkdir dir="${build.home}"/>
+		<mkdir dir="${dist.home}"/>
+		<mkdir dir="${deps.home}"/>
+	</target>
+		
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src.home}" 
+			destdir="${build.home}"
+			debug="${compile.debug}"
+			deprecation="${compile.deprecation}"
+			optimize="${compile.optimize}">			
+			<classpath refid="compile.classpath"></classpath>
+		</javac>
+	</target>
+	
+	<target name="dist" depends="compile">
+		
+		<copy todir="${deps.home}" >
+			<fileset refid="httpcomponents-client-jars"></fileset>
+		</copy>
+		
+		<!-- Create jar file with pre-defined deps Class-Path set -->
+		<jar jarfile="${dist.home}/${app.name}.jar" 
+			basedir="${build.home}"
+			excludes="com/vtiger/tests/**">
+			<fileset file="README.txt"></fileset>
+			<manifest>
+				<attribute name="Class-Path" value=". deps/apache-mime4j-0.6.jar deps/commons-codec-1.3.jar deps/commons-logging-1.1.1.jar deps/httpclient-4.0.jar deps/httpcore-4.0.1.jar deps/httpmime-4.0.jar"/>
+			</manifest>			
+		</jar>
+	</target>
+	
+</project>
